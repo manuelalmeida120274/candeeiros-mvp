@@ -95,8 +95,7 @@ async function ghRead(token){
   if(r.status===404)return{data:DEFAULT,sha:null};
   if(!r.ok)throw new Error(`${r.status}`);
   const j=await r.json();
-  const bytes=Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0));
-  return{data:JSON.parse(new TextDecoder('utf-8').decode(bytes)),sha:j.sha};
+  return{data:JSON.parse(atob(j.content.replace(/\n/g,''))),sha:j.sha};
 }
 async function ghWrite(token,data,sha){
   const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
@@ -192,7 +191,13 @@ function App(){
         hm&&React.createElement('div',{className:`al ${m>=30?'al-g':m>0?'al-a':'al-r'}`},`Margem: ${m>=0?'+':''}${m.toFixed(0)}€ — ${m>=30?'✓ Boa margem':m>0?'Margem baixa':'Negativa!'}`),
         F('Título','titulo','text','ex: Candeeiro de pé vintage metal'),
         React.createElement('div',{className:'r2'},Sel('Fonte','fonte',OPT.fonte),Sel('Pipeline','pipeline',OPT.pipeline)),
-        F('Link','link','url','https://...'),
+        React.createElement('div',{className:'field'},
+          React.createElement('label',null,'Link'),
+          React.createElement('div',{style:{display:'flex',gap:8}},
+            React.createElement('input',{type:'url',value:form.link,onChange:e=>upd('link',e.target.value),placeholder:'https://...'}),
+            form.link&&React.createElement('a',{href:form.link,target:'_blank',rel:'noopener noreferrer',style:{display:'flex',alignItems:'center',padding:'0 12px',background:'var(--amber)',color:'#fff',borderRadius:'var(--rs)',fontSize:14,textDecoration:'none',whiteSpace:'nowrap',flexShrink:0}},'↗ Abrir')
+          )
+        ),
         React.createElement('div',{className:'r2'},Sel('Tipo','tipo',OPT.tipo),Sel('Estilo','estilo',OPT.estilo)),
         React.createElement('div',{className:'r2'},F('Preço pedido (€)','precoPedido','number','0'),F('Preço máx. (€)','precoMax','number','máx 50€')),
         F('Revenda alvo (€)','revenda','number','≥90€'),
@@ -240,10 +245,16 @@ function OpsTab({ops,openAdd,openEdit}){
       :ops.map(op=>{
         const m=(parseFloat(op.revenda)||0)-(parseFloat(op.precoMax)||0);
         const hm=op.revenda&&op.precoMax;const ps=PS[op.pipeline]||PS.vistas;
-        return React.createElement('div',{key:op.id,className:'op-card',onClick:()=>openEdit(op)},
-          React.createElement('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:3}},React.createElement('span',{style:{fontSize:11,fontFamily:'monospace',color:'var(--text3)'}},op.id),React.createElement('span',{className:'badge',style:{background:ps.bg,color:ps.c}},op.pipeline)),
-          React.createElement('div',{style:{fontSize:15,fontWeight:600,margin:'3px 0 7px'}},op.titulo||'(sem título)'),
-          React.createElement('div',{style:{display:'flex',gap:14,fontSize:13,color:'var(--text2)',flexWrap:'wrap'}},
+        return React.createElement('div',{key:op.id,className:'op-card'},
+          React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:3}},
+            React.createElement('span',{style:{fontSize:11,fontFamily:'monospace',color:'var(--text3)'}},op.id),
+            React.createElement('div',{style:{display:'flex',gap:6,alignItems:'center'}},
+              React.createElement('span',{className:'badge',style:{background:ps.bg,color:ps.c}},op.pipeline),
+              op.link&&React.createElement('a',{href:op.link,target:'_blank',rel:'noopener noreferrer',onClick:e=>e.stopPropagation(),style:{fontSize:13,color:'var(--amber)',textDecoration:'none',fontWeight:600,padding:'1px 6px',border:'0.5px solid var(--amber)',borderRadius:6}},'↗')
+            )
+          ),
+          React.createElement('div',{style:{fontSize:15,fontWeight:600,margin:'3px 0 7px',cursor:'pointer'},onClick:()=>openEdit(op)},op.titulo||'(sem título)'),
+          React.createElement('div',{style:{display:'flex',gap:14,fontSize:13,color:'var(--text2)',flexWrap:'wrap',cursor:'pointer'},onClick:()=>openEdit(op)},
             op.precoMax&&React.createElement('span',null,`Máx: ${fmt(op.precoMax)}`),
             op.revenda&&React.createElement('span',null,`Revenda: ${fmt(op.revenda)}`),
             hm&&React.createElement('span',{style:{color:m>=30?'var(--green)':'var(--red)',fontWeight:600}},`Margem: ${fmt(m)}`)
