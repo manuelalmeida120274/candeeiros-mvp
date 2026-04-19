@@ -7,535 +7,334 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <style>
-  :root {
-    --bg: #f5f4f1;
-    --surface: #ffffff;
-    --border: rgba(0,0,0,0.10);
-    --border-md: rgba(0,0,0,0.18);
-    --text: #1a1a1a;
-    --text2: #666;
-    --text3: #999;
-    --radius: 12px;
-    --radius-sm: 8px;
-    --amber: #BA7517;
-    --amber-bg: #FAEEDA;
-    --amber-text: #854F0B;
-    --green: #3B6D11;
-    --green-bg: #EAF3DE;
-    --red: #A32D2D;
-    --red-bg: #FCEBEB;
-    --blue: #185FA5;
-    --blue-bg: #E6F1FB;
-    --gray-bg: #F1EFE8;
-    --gray-text: #5F5E5A;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #1a1a1a;
-      --surface: #252525;
-      --border: rgba(255,255,255,0.10);
-      --border-md: rgba(255,255,255,0.18);
-      --text: #f0f0f0;
-      --text2: #aaa;
-      --text3: #666;
-      --amber-bg: #2a1f0a;
-      --amber-text: #EF9F27;
-      --green-bg: #0e1f06;
-      --green: #97C459;
-      --red-bg: #200a0a;
-      --red: #F09595;
-      --blue-bg: #06152a;
-      --blue: #85B7EB;
-      --gray-bg: #2c2c2a;
-      --gray-text: #B4B2A9;
-    }
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; }
-  #root { max-width: 480px; margin: 0 auto; min-height: 100dvh; display: flex; flex-direction: column; }
-  .content { flex: 1; padding: 16px 14px 80px; overflow-y: auto; }
-  .nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; display: flex; background: var(--surface); border-top: 0.5px solid var(--border-md); z-index: 100; }
-  .nav button { flex: 1; border: none; background: none; padding: 10px 4px 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; color: var(--text3); }
-  .nav button.active { color: var(--amber); }
-  .nav button svg { width: 22px; height: 22px; }
-  .page-title { font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 16px; }
-  .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; }
-  .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 500; }
-  .btn { border: 0.5px solid var(--border-md); background: none; color: var(--text); border-radius: var(--radius-sm); padding: 10px 18px; cursor: pointer; font-size: 14px; font-family: inherit; }
-  .btn:active { opacity: .7; }
-  .btn-primary { background: var(--amber); color: #fff; border-color: var(--amber); }
-  .btn-danger { color: var(--red); border-color: var(--red); background: var(--red-bg); }
-  .btn-sm { padding: 6px 12px; font-size: 13px; }
-  .fab { position: fixed; bottom: 72px; right: calc(50% - 224px); width: 52px; height: 52px; border-radius: 50%; background: var(--amber); color: #fff; border: none; font-size: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 12px rgba(0,0,0,.25); z-index: 99; }
-  @media (max-width: 480px) { .fab { right: 16px; } }
-  .field { margin-bottom: 14px; }
-  .field label { display: block; font-size: 12px; color: var(--text2); margin-bottom: 5px; font-weight: 500; }
-  .field input, .field select, .field textarea {
-    width: 100%; border: 0.5px solid var(--border-md); border-radius: var(--radius-sm);
-    padding: 10px 12px; font-size: 15px; background: var(--surface); color: var(--text);
-    font-family: inherit; outline: none; appearance: none; -webkit-appearance: none;
-  }
-  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--amber); }
-  .field textarea { height: 80px; resize: vertical; }
-  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .metric { background: var(--gray-bg); border-radius: var(--radius-sm); padding: 12px; text-align: center; }
-  .metric .val { font-size: 24px; font-weight: 600; }
-  .metric .lbl { font-size: 11px; color: var(--text2); margin-top: 2px; }
-  .checklist-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
-  .checklist-row:last-child { border-bottom: none; }
-  .cl-text { flex: 1; font-size: 13px; line-height: 1.4; }
-  .cl-btn { padding: 5px 10px; border-radius: 20px; border: 0.5px solid var(--border-md); background: none; cursor: pointer; font-size: 12px; font-family: inherit; min-width: 70px; text-align: center; color: var(--text2); }
-  .cl-sim { background: var(--green-bg); color: var(--green); border-color: var(--green); }
-  .cl-nao { background: var(--red-bg); color: var(--red); border-color: var(--red); }
-  .cl-duv { background: var(--amber-bg); color: var(--amber-text); border-color: var(--amber); }
-  .task-row { display: flex; align-items: flex-start; gap: 8px; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
-  .task-row:last-child { border-bottom: none; }
-  .task-area { font-size: 10px; padding: 2px 7px; border-radius: 10px; background: var(--gray-bg); color: var(--gray-text); flex-shrink: 0; margin-top: 2px; }
-  .task-text { flex: 1; font-size: 13px; line-height: 1.4; }
-  .status-pill { border: none; padding: 4px 10px; border-radius: 20px; font-size: 11px; cursor: pointer; font-family: inherit; flex-shrink: 0; }
-  .st-pf { background: var(--gray-bg); color: var(--gray-text); }
-  .st-ec { background: var(--amber-bg); color: var(--amber-text); }
-  .st-ft { background: var(--green-bg); color: var(--green); }
-  .week-header { font-size: 13px; font-weight: 600; color: var(--text2); margin: 16px 0 4px; display: flex; justify-content: space-between; }
-  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; margin: 4px 0 10px; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width .3s; }
-  .guia-tabs { display: flex; gap: 6px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 2px; }
-  .guia-tab { padding: 6px 14px; border-radius: 20px; border: 0.5px solid var(--border-md); background: none; cursor: pointer; font-size: 13px; font-family: inherit; color: var(--text2); white-space: nowrap; }
-  .guia-tab.active { background: var(--amber); color: #fff; border-color: var(--amber); }
-  .step-num { width: 30px; height: 30px; border-radius: 50%; background: var(--amber); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0; }
-  .step-row { display: flex; gap: 12px; margin-bottom: 14px; }
-  .step-title { font-size: 14px; font-weight: 600; }
-  .step-desc { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
-  .step-err { font-size: 12px; color: var(--red); margin-top: 3px; }
-  .op-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 13px 15px; margin-bottom: 8px; cursor: pointer; transition: border-color .15s; }
-  .op-card:active { opacity: .8; }
-  .op-id { font-size: 11px; font-family: monospace; color: var(--text3); }
-  .op-title { font-size: 15px; font-weight: 600; margin: 3px 0 7px; }
-  .op-nums { display: flex; gap: 14px; font-size: 13px; color: var(--text2); flex-wrap: wrap; }
-  .margem-pos { color: var(--green); font-weight: 600; }
-  .margem-neg { color: var(--red); font-weight: 600; }
-  .empty { text-align: center; padding: 50px 20px; color: var(--text2); }
-  .empty-icon { font-size: 36px; margin-bottom: 12px; }
-  .form-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-  .back-btn { border: none; background: none; cursor: pointer; color: var(--text2); font-size: 22px; padding: 0; line-height: 1; }
-  .form-title { font-size: 18px; font-weight: 600; }
-  .canal-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 0.5px solid var(--border); }
-  .canal-row:last-child { border-bottom: none; }
-  .canal-name { font-size: 14px; font-weight: 600; }
-  .canal-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
-  .canal-link { font-size: 13px; color: var(--amber); text-decoration: none; font-weight: 500; }
-  .alert { padding: 11px 14px; border-radius: var(--radius-sm); font-size: 13px; margin-bottom: 12px; line-height: 1.4; }
-  .alert-red { background: var(--red-bg); color: var(--red); }
-  .alert-green { background: var(--green-bg); color: var(--green); }
-  .alert-amber { background: var(--amber-bg); color: var(--amber-text); }
-  .section-label { font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; margin: 16px 0 8px; }
-  .model-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; }
-  .model-card.recommended { border-color: var(--amber); border-width: 2px; }
-  .model-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-  .divider { height: 0.5px; background: var(--border); margin: 14px 0; }
+:root{--bg:#f5f4f1;--surface:#fff;--border:rgba(0,0,0,.10);--border-md:rgba(0,0,0,.18);--text:#1a1a1a;--text2:#666;--text3:#999;--r:12px;--rs:8px;--amber:#BA7517;--amber-bg:#FAEEDA;--amber-t:#854F0B;--green:#3B6D11;--green-bg:#EAF3DE;--red:#A32D2D;--red-bg:#FCEBEB;--gray-bg:#F1EFE8;--gray-t:#5F5E5A}
+@media(prefers-color-scheme:dark){:root{--bg:#1a1a1a;--surface:#252525;--border:rgba(255,255,255,.10);--border-md:rgba(255,255,255,.18);--text:#f0f0f0;--text2:#aaa;--text3:#666;--amber-bg:#2a1f0a;--amber-t:#EF9F27;--green-bg:#0e1f06;--green:#97C459;--red-bg:#200a0a;--red:#F09595;--gray-bg:#2c2c2a;--gray-t:#B4B2A9}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:15px}
+#root{max-width:480px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column}
+.content{flex:1;padding:16px 14px 80px}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;display:flex;background:var(--surface);border-top:.5px solid var(--border-md);z-index:100}
+.nav button{flex:1;border:none;background:none;padding:10px 4px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--text3)}
+.nav button.active{color:var(--amber)}
+.nav button svg{width:22px;height:22px}
+.pt{font-size:22px;font-weight:600;margin-bottom:16px}
+.card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:10px}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.btn{border:.5px solid var(--border-md);background:none;color:var(--text);border-radius:var(--rs);padding:10px 18px;cursor:pointer;font-size:14px;font-family:inherit}
+.btn-p{background:var(--amber);color:#fff;border-color:var(--amber)}
+.btn-d{color:var(--red);border-color:var(--red);background:var(--red-bg)}
+.btn-sm{padding:6px 12px;font-size:13px}
+.fab{position:fixed;bottom:72px;right:calc(50% - 224px);width:52px;height:52px;border-radius:50%;background:var(--amber);color:#fff;border:none;font-size:26px;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.25);z-index:99;display:flex;align-items:center;justify-content:center}
+@media(max-width:480px){.fab{right:16px}}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px;font-weight:500}
+.field input,.field select,.field textarea{width:100%;border:.5px solid var(--border-md);border-radius:var(--rs);padding:10px 12px;font-size:15px;background:var(--surface);color:var(--text);font-family:inherit;outline:none;-webkit-appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--amber)}
+.field textarea{height:80px;resize:vertical}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.metric{background:var(--gray-bg);border-radius:var(--rs);padding:12px;text-align:center}
+.metric .v{font-size:24px;font-weight:600}
+.metric .l{font-size:11px;color:var(--text2);margin-top:2px}
+.cl-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:.5px solid var(--border)}
+.cl-row:last-child{border-bottom:none}
+.cl-btn{padding:5px 10px;border-radius:20px;border:.5px solid var(--border-md);background:none;cursor:pointer;font-size:12px;font-family:inherit;min-width:70px;text-align:center;color:var(--text2)}
+.cl-sim{background:var(--green-bg);color:var(--green);border-color:var(--green)}
+.cl-nao{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+.cl-duv{background:var(--amber-bg);color:var(--amber-t);border-color:var(--amber)}
+.tk-row{display:flex;align-items:flex-start;gap:8px;padding:9px 0;border-bottom:.5px solid var(--border)}
+.tk-row:last-child{border-bottom:none}
+.tk-area{font-size:10px;padding:2px 7px;border-radius:10px;background:var(--gray-bg);color:var(--gray-t);flex-shrink:0;margin-top:2px}
+.sp{border:none;padding:4px 10px;border-radius:20px;font-size:11px;cursor:pointer;font-family:inherit;flex-shrink:0}
+.st-pf{background:var(--gray-bg);color:var(--gray-t)}
+.st-ec{background:var(--amber-bg);color:var(--amber-t)}
+.st-ft{background:var(--green-bg);color:var(--green)}
+.wh{font-size:13px;font-weight:600;color:var(--text2);margin:16px 0 4px;display:flex;justify-content:space-between}
+.pb{height:4px;background:var(--border);border-radius:2px;margin:4px 0 10px;overflow:hidden}
+.pf2{height:100%;background:var(--green);border-radius:2px;transition:width .3s}
+.gt{padding:6px 14px;border-radius:20px;border:.5px solid var(--border-md);background:none;cursor:pointer;font-size:13px;font-family:inherit;color:var(--text2);white-space:nowrap}
+.gt.active{background:var(--amber);color:#fff;border-color:var(--amber)}
+.gt-tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px}
+.sn{width:30px;height:30px;border-radius:50%;background:var(--amber);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0}
+.op-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:13px 15px;margin-bottom:8px;cursor:pointer}
+.al{padding:11px 14px;border-radius:var(--rs);font-size:13px;margin-bottom:12px;line-height:1.4}
+.al-r{background:var(--red-bg);color:var(--red)}
+.al-g{background:var(--green-bg);color:var(--green)}
+.al-a{background:var(--amber-bg);color:var(--amber-t)}
+.fh{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.divider{height:.5px;background:var(--border);margin:12px 0}
+.sync-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--surface);border-bottom:.5px solid var(--border);font-size:12px;color:var(--text2);position:sticky;top:0;z-index:10}
+.sync-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}
+.dot-ok{background:var(--green)}.dot-err{background:var(--red)}.dot-sync{background:var(--amber);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.setup-wrap{max-width:400px;margin:60px auto 0;padding:0 20px}
+.setup-wrap h2{font-size:20px;font-weight:600;margin-bottom:8px}
+.setup-wrap p{font-size:14px;color:var(--text2);margin-bottom:20px;line-height:1.5}
+.canal-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:.5px solid var(--border)}
+.canal-row:last-child{border-bottom:none}
+.mc{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:10px}
+.mc.rec{border-color:var(--amber);border-width:2px}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script>
-const {useState, useEffect} = React;
+const {useState,useEffect,useCallback,useRef}=React;
+const OWNER='manuelalmeida120274',REPO='candeeiros-mvp',BRANCH='main',FILE='data.json';
+const API=`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`;
+const CHECKLIST=["Estilo com apelo claro","Parece mais valioso do que o preço pedido sugere","Potencial plausível de revenda perto de 90€ ou mais","Preço pedido dentro de zona interessante","Preço máximo aceitável faz sentido","Estado físico aceitável","Sem sinais óbvios de dano grave","Estado elétrico funcional ou validável","Transporte viável","Arrumação viável","Anúncio dá confiança suficiente","Vale a pena investigar mais"];
+const TASKS0=[{id:1,sem:"Semana 1",area:"sourcing",text:"Procurar 10 anúncios em OLX e Facebook Marketplace",st:"pf"},{id:2,sem:"Semana 1",area:"triagem",text:"Guardar 5 oportunidades com potencial mínimo",st:"pf"},{id:3,sem:"Semana 1",area:"triagem",text:"Filtrar com checklist até restarem 3",st:"pf"},{id:4,sem:"Semana 1",area:"avaliação",text:"Avaliar 3 peças a fundo",st:"pf"},{id:5,sem:"Semana 1",area:"avaliação",text:"Decidir se 1 merece contacto",st:"pf"},{id:6,sem:"Semana 1",area:"sourcing",text:"Registar tudo na Base de Dados",st:"pf"},{id:7,sem:"Semana 2",area:"compra",text:"Contactar vendedor da peça mais promissora",st:"pf"},{id:8,sem:"Semana 2",area:"compra",text:"Negociar preço dentro do teto de 50€",st:"pf"},{id:9,sem:"Semana 2",area:"avaliação",text:"Validar estado físico e logística de transporte",st:"pf"},{id:10,sem:"Semana 2",area:"compra",text:"Decidir: comprar ou rejeitar",st:"pf"},{id:11,sem:"Semana 2",area:"anúncio",text:"Se comprar: limpar e preparar para fotografar",st:"pf"},{id:12,sem:"Semana 3",area:"anúncio",text:"Tirar fotos com boa luz e fundo limpo",st:"pf"},{id:13,sem:"Semana 3",area:"anúncio",text:"Escrever descrição e posicionar o preço",st:"pf"},{id:14,sem:"Semana 3",area:"anúncio",text:"Publicar anúncio em OLX e/ou Facebook Marketplace",st:"pf"},{id:15,sem:"Semana 3",area:"venda",text:"Responder a contactos de compradores",st:"pf"},{id:16,sem:"Semana 3",area:"venda",text:"Rever preço se necessário após 5–7 dias",st:"pf"},{id:17,sem:"Semana 4",area:"venda",text:"Fechar venda ou encerrar o teste",st:"pf"},{id:18,sem:"Semana 4",area:"revisão",text:"Registar margem real na Base de Dados",st:"pf"},{id:19,sem:"Semana 4",area:"revisão",text:"Registar lições aprendidas",st:"pf"},{id:20,sem:"Semana 4",area:"revisão",text:"Decidir: continuar, ajustar ou parar",st:"pf"}];
+const OPT={fonte:["OLX","Facebook Marketplace","Loja / feira","Conhecido","Outra"],tipo:["mesa","pé","parede","teto","outro"],estilo:["moderno/nórdico","vintage","hotel/boutique","industrial","outro"],fisico:["excelente","bom","aceitável","mau"],eletrico:["funciona","precisa confirmar","falha","não testado"],transporte:["fácil","média","difícil"],pipeline:["vistas","pré-selecionadas","avaliadas","compradas","anunciadas","vendidas","perdidas"]};
+const PS={vistas:{bg:"#F1EFE8",c:"#5F5E5A"},"pré-selecionadas":{bg:"#E6F1FB",c:"#185FA5"},avaliadas:{bg:"#FAEEDA",c:"#854F0B"},compradas:{bg:"#FAEEDA",c:"#633806"},anunciadas:{bg:"#E6F1FB",c:"#0C447C"},vendidas:{bg:"#EAF3DE",c:"#3B6D11"},perdidas:{bg:"#FCEBEB",c:"#A32D2D"}};
+const DEFAULT={ops:[],tasks:TASKS0,cl:{}};
+const fmt=n=>n!=null&&n!==''?`${parseFloat(n).toFixed(0)}€`:'—';
+const genId=ops=>`L${String(ops.length+1).padStart(3,'0')}`;
+const emptyOp=()=>({titulo:'',fonte:'OLX',link:'',tipo:'mesa',estilo:'vintage',precoPedido:'',precoMax:'',revenda:'',fisico:'bom',eletrico:'precisa confirmar',transporte:'fácil',score:'3',pipeline:'vistas',notas:''});
 
-const CHECKLIST = [
-  "Estilo com apelo claro",
-  "Parece mais valioso do que o preço pedido sugere",
-  "Potencial plausível de revenda perto de 90€ ou mais",
-  "Preço pedido dentro de zona interessante",
-  "Preço máximo aceitável faz sentido",
-  "Estado físico aceitável",
-  "Sem sinais óbvios de dano grave",
-  "Estado elétrico funcional ou validável",
-  "Transporte viável",
-  "Arrumação viável",
-  "Anúncio dá confiança suficiente",
-  "Vale a pena investigar mais"
-];
-
-const TASKS0 = [
-  {id:1,sem:"Semana 1",area:"sourcing",text:"Procurar 10 anúncios em OLX e Facebook Marketplace",st:"pf",pri:"alta"},
-  {id:2,sem:"Semana 1",area:"triagem",text:"Guardar 5 oportunidades com potencial mínimo",st:"pf",pri:"alta"},
-  {id:3,sem:"Semana 1",area:"triagem",text:"Filtrar com checklist até restarem 3",st:"pf",pri:"alta"},
-  {id:4,sem:"Semana 1",area:"avaliação",text:"Avaliar 3 peças a fundo (margem, estado, transporte)",st:"pf",pri:"alta"},
-  {id:5,sem:"Semana 1",area:"avaliação",text:"Decidir se 1 merece contacto",st:"pf",pri:"alta"},
-  {id:6,sem:"Semana 1",area:"sourcing",text:"Registar tudo na Base de Dados",st:"pf",pri:"média"},
-  {id:7,sem:"Semana 2",area:"compra",text:"Contactar vendedor da peça mais promissora",st:"pf",pri:"alta"},
-  {id:8,sem:"Semana 2",area:"compra",text:"Negociar preço dentro do teto de 50€",st:"pf",pri:"alta"},
-  {id:9,sem:"Semana 2",area:"avaliação",text:"Validar estado físico e logística de transporte",st:"pf",pri:"alta"},
-  {id:10,sem:"Semana 2",area:"compra",text:"Decidir: comprar ou rejeitar",st:"pf",pri:"alta"},
-  {id:11,sem:"Semana 2",area:"anúncio",text:"Se comprar: limpar e preparar para fotografar",st:"pf",pri:"média"},
-  {id:12,sem:"Semana 3",area:"anúncio",text:"Tirar fotos com boa luz e fundo limpo",st:"pf",pri:"alta"},
-  {id:13,sem:"Semana 3",area:"anúncio",text:"Escrever descrição e posicionar o preço",st:"pf",pri:"alta"},
-  {id:14,sem:"Semana 3",area:"anúncio",text:"Publicar anúncio em OLX e/ou Facebook Marketplace",st:"pf",pri:"alta"},
-  {id:15,sem:"Semana 3",area:"venda",text:"Responder a contactos de compradores",st:"pf",pri:"alta"},
-  {id:16,sem:"Semana 3",area:"venda",text:"Rever preço se necessário após 5–7 dias",st:"pf",pri:"média"},
-  {id:17,sem:"Semana 4",area:"venda",text:"Fechar venda ou encerrar o teste",st:"pf",pri:"alta"},
-  {id:18,sem:"Semana 4",area:"revisão",text:"Registar margem real na Base de Dados",st:"pf",pri:"alta"},
-  {id:19,sem:"Semana 4",area:"revisão",text:"Registar lições aprendidas",st:"pf",pri:"média"},
-  {id:20,sem:"Semana 4",area:"revisão",text:"Decidir: continuar, ajustar ou parar",st:"pf",pri:"alta"}
-];
-
-const OPT = {
-  fonte: ["OLX","Facebook Marketplace","Loja / feira","Conhecido","Outra"],
-  tipo: ["mesa","pé","parede","teto","outro"],
-  estilo: ["moderno/nórdico","vintage","hotel/boutique","industrial","outro"],
-  fisico: ["excelente","bom","aceitável","mau"],
-  eletrico: ["funciona","precisa confirmar","falha","não testado"],
-  transporte: ["fácil","média","difícil"],
-  pipeline: ["vistas","pré-selecionadas","avaliadas","compradas","anunciadas","vendidas","perdidas"]
-};
-
-const PIPELINE_STYLE = {
-  vistas:         {bg:"#F1EFE8", color:"#5F5E5A"},
-  "pré-selecionadas": {bg:"#E6F1FB", color:"#185FA5"},
-  avaliadas:      {bg:"#FAEEDA", color:"#854F0B"},
-  compradas:      {bg:"#FAEEDA", color:"#633806"},
-  anunciadas:     {bg:"#E6F1FB", color:"#0C447C"},
-  vendidas:       {bg:"#EAF3DE", color:"#3B6D11"},
-  perdidas:       {bg:"#FCEBEB", color:"#A32D2D"}
-};
-
-const load = (k, fb) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fb; } catch(e) { return fb; } };
-const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {} };
-
-const fmt = (n) => n != null && n !== '' ? `${parseFloat(n).toFixed(0)}€` : '—';
-const genId = (ops) => `L${String(ops.length + 1).padStart(3, '0')}`;
-const emptyOp = () => ({
-  titulo:'', fonte:'OLX', link:'', tipo:'mesa', estilo:'vintage',
-  precoPedido:'', precoNeg:'', precoMax:'', revenda:'',
-  fisico:'bom', eletrico:'precisa confirmar', transporte:'fácil',
-  score:'3', pipeline:'vistas', notas:''
-});
-
-function Icon({d, size=22}) {
-  return React.createElement('svg', {viewBox:'0 0 24 24', fill:'none', stroke:'currentColor', strokeWidth:1.8, width:size, height:size, 'aria-hidden':true},
-    React.createElement('path', {strokeLinecap:'round', strokeLinejoin:'round', d}));
+async function ghRead(token){
+  const r=await fetch(API,{headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json'}});
+  if(r.status===404)return{data:DEFAULT,sha:null};
+  if(!r.ok)throw new Error(`${r.status}`);
+  const j=await r.json();
+  return{data:JSON.parse(atob(j.content.replace(/\n/g,''))),sha:j.sha};
+}
+async function ghWrite(token,data,sha){
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+  const body={message:'Update data',content,branch:BRANCH};
+  if(sha)body.sha=sha;
+  const r=await fetch(API,{method:'PUT',headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){const e=await r.json();throw new Error(e.message);}
+  return (await r.json()).content.sha;
 }
 
-function App() {
-  const [tab, setTab] = useState('ops');
-  const [ops, setOps] = useState(() => load('candeeiros_ops', []));
-  const [tasks, setTasks] = useState(() => load('candeeiros_tasks', TASKS0));
-  const [cl, setCl] = useState(() => load('candeeiros_cl', {}));
-  const [form, setForm] = useState(null);
-  const [editId, setEditId] = useState(null);
-  const [guiaTab, setGuiaTab] = useState('fluxo');
+function Icon({d,size=22}){return React.createElement('svg',{viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:1.8,width:size,height:size},React.createElement('path',{strokeLinecap:'round',strokeLinejoin:'round',d}));}
 
-  const saveOps = (v) => { setOps(v); save('candeeiros_ops', v); };
-  const saveTasks = (v) => { setTasks(v); save('candeeiros_tasks', v); };
-  const saveCl = (v) => { setCl(v); save('candeeiros_cl', v); };
-
-  const openAdd = () => { setEditId(null); setForm(emptyOp()); };
-  const openEdit = (op) => { setEditId(op.id); setForm({...op}); };
-  const saveForm = () => {
-    if (!form.titulo.trim()) return;
-    if (editId != null) {
-      saveOps(ops.map(o => o.id === editId ? {...form, id: editId} : o));
-    } else {
-      saveOps([...ops, {...form, id: genId(ops)}]);
-    }
-    setForm(null); setEditId(null);
+function Setup({onSave}){
+  const [tok,setTok]=useState('');
+  const [err,setErr]=useState('');
+  const [loading,setLoading]=useState(false);
+  const go=async()=>{
+    if(!tok.trim()){setErr('Cola o token.');return;}
+    setLoading(true);setErr('');
+    try{await ghRead(tok.trim());localStorage.setItem('gh_tok',tok.trim());onSave(tok.trim());}
+    catch(e){setErr('Token inválido ou sem acesso ao repositório.');}
+    setLoading(false);
   };
-  const deleteOp = (id) => { if (confirm('Eliminar esta oportunidade?')) { saveOps(ops.filter(o => o.id !== id)); setForm(null); setEditId(null); } };
-  const cycleTask = (id) => {
-    const seq = {pf:'ec', ec:'ft', ft:'pf'};
-    saveTasks(tasks.map(t => t.id === id ? {...t, st: seq[t.st] || 'pf'} : t));
-  };
+  return React.createElement('div',{className:'setup-wrap'},
+    React.createElement('h2',null,'Ligar ao GitHub'),
+    React.createElement('p',null,'A app guarda os dados no teu repositório GitHub para sincronizares entre PC e telemóvel. Introduz o teu Personal Access Token (scope: repo).'),
+    React.createElement('div',{className:'field'},
+      React.createElement('label',null,'Personal Access Token'),
+      React.createElement('input',{type:'password',value:tok,onChange:e=>setTok(e.target.value),placeholder:'ghp_...',onKeyDown:e=>e.key==='Enter'&&go()})
+    ),
+    err&&React.createElement('div',{className:'al al-r'},err),
+    React.createElement('button',{className:'btn btn-p',style:{width:'100%'},onClick:go,disabled:loading},loading?'A verificar...':'Ligar'),
+    React.createElement('p',{style:{fontSize:12,color:'var(--text3)',marginTop:12,lineHeight:1.5}},'Cria em: github.com → Settings → Developer settings → Personal access tokens (classic) → scope: repo')
+  );
+}
 
-  if (form !== null) {
-    return React.createElement(FormView, {form, setForm, onSave: saveForm, onDelete: editId != null ? () => deleteOp(editId) : null, isEdit: editId != null, onCancel: () => {setForm(null); setEditId(null);}});
+function App(){
+  const [token,setToken]=useState(()=>localStorage.getItem('gh_tok')||'');
+  const [tab,setTab]=useState('ops');
+  const [ops,setOps]=useState([]);
+  const [tasks,setTasks]=useState(TASKS0);
+  const [cl,setCl]=useState({});
+  const [sha,setSha]=useState(null);
+  const [form,setForm]=useState(null);
+  const [editId,setEditId]=useState(null);
+  const [gt,setGt]=useState('fluxo');
+  const [sync,setSync]=useState('idle');
+  const [ready,setReady]=useState(false);
+  const timer=useRef(null);
+
+  useEffect(()=>{
+    if(!token)return;
+    setSync('syncing');
+    ghRead(token).then(({data,sha:s})=>{
+      setOps(data.ops||[]);setTasks(data.tasks||TASKS0);setCl(data.cl||{});setSha(s);setSync('ok');setReady(true);
+    }).catch(()=>{setSync('err');setReady(true);});
+  },[token]);
+
+  const push=useCallback((d,s)=>{
+    setSync('syncing');
+    if(timer.current)clearTimeout(timer.current);
+    timer.current=setTimeout(()=>{
+      ghWrite(token,d,s).then(ns=>{setSha(ns);setSync('ok');}).catch(()=>setSync('err'));
+    },1500);
+  },[token]);
+
+  const updOps=v=>{setOps(v);push({ops:v,tasks,cl},sha);};
+  const updTasks=v=>{setTasks(v);push({ops,tasks:v,cl},sha);};
+  const updCl=v=>{setCl(v);push({ops,tasks,cl:v},sha);};
+
+  if(!token)return React.createElement(Setup,{onSave:t=>setToken(t)});
+  if(!ready)return React.createElement('div',{style:{padding:40,textAlign:'center',color:'var(--text2)'}},'A carregar dados do GitHub...');
+
+  const TABS=[{k:'ops',l:'Oportunidades',d:'M3 7h18M3 12h18M3 17h12'},{k:'checklist',l:'Checklist',d:'M9 12l2 2 4-4M5 12a7 7 0 1014 0A7 7 0 005 12'},{k:'tarefas',l:'Tarefas',d:'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 12h6M9 16h4'},{k:'guias',l:'Guias',d:'M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.966 8.966 0 00-6 2.292m0-14.25v14.25'}];
+  const syncLabel={idle:'',syncing:'A sincronizar...',ok:'Sincronizado ✓',err:'Erro de sincronização'};
+  const dotClass={idle:'dot-ok',syncing:'dot-sync',ok:'dot-ok',err:'dot-err'}[sync];
+
+  if(form!==null){
+    const upd=(k,v)=>setForm(f=>({...f,[k]:v}));
+    const m=(parseFloat(form.revenda)||0)-(parseFloat(form.precoMax)||0);
+    const hm=form.revenda&&form.precoMax;
+    const save=()=>{if(!form.titulo.trim())return;const nops=editId?ops.map(o=>o.id===editId?{...form,id:editId}:o):[...ops,{...form,id:genId(ops)}];updOps(nops);setForm(null);setEditId(null);};
+    const del=()=>{if(confirm('Eliminar?')){updOps(ops.filter(o=>o.id!==editId));setForm(null);setEditId(null);}};
+    const F=(l,k,t,p)=>React.createElement('div',{className:'field'},React.createElement('label',null,l),React.createElement('input',{type:t||'text',value:form[k],onChange:e=>upd(k,e.target.value),placeholder:p||''}));
+    const Sel=(l,k,opts)=>React.createElement('div',{className:'field'},React.createElement('label',null,l),React.createElement('select',{value:form[k],onChange:e=>upd(k,e.target.value)},opts.map(o=>React.createElement('option',{key:o},o))));
+    return React.createElement('div',null,
+      React.createElement('div',{className:'sync-bar'},React.createElement('span',null,React.createElement('span',{className:`sync-dot ${dotClass}`}),syncLabel[sync])),
+      React.createElement('div',{className:'content'},
+        React.createElement('div',{className:'fh'},
+          React.createElement('button',{onClick:()=>{setForm(null);setEditId(null);},style:{border:'none',background:'none',cursor:'pointer',color:'var(--text2)',fontSize:21,padding:0}},'←'),
+          React.createElement('span',{style:{fontSize:18,fontWeight:600}},editId?'Editar oportunidade':'Nova oportunidade')
+        ),
+        hm&&React.createElement('div',{className:`al ${m>=30?'al-g':m>0?'al-a':'al-r'}`},`Margem: ${m>=0?'+':''}${m.toFixed(0)}€ — ${m>=30?'✓ Boa margem':m>0?'Margem baixa':'Negativa!'}`),
+        F('Título','titulo','text','ex: Candeeiro de pé vintage metal'),
+        React.createElement('div',{className:'r2'},Sel('Fonte','fonte',OPT.fonte),Sel('Pipeline','pipeline',OPT.pipeline)),
+        F('Link','link','url','https://...'),
+        React.createElement('div',{className:'r2'},Sel('Tipo','tipo',OPT.tipo),Sel('Estilo','estilo',OPT.estilo)),
+        React.createElement('div',{className:'r2'},F('Preço pedido (€)','precoPedido','number','0'),F('Preço máx. (€)','precoMax','number','máx 50€')),
+        F('Revenda alvo (€)','revenda','number','≥90€'),
+        React.createElement('div',{className:'r2'},Sel('Estado físico','fisico',OPT.fisico),Sel('Estado elétrico','eletrico',OPT.eletrico)),
+        React.createElement('div',{className:'r2'},Sel('Transporte','transporte',OPT.transporte),Sel('Score','score',['1','2','3','4','5'])),
+        React.createElement('div',{className:'field'},React.createElement('label',null,'Notas'),React.createElement('textarea',{value:form.notas,onChange:e=>upd('notas',e.target.value),placeholder:'Observações...'})),
+        React.createElement('div',{style:{display:'flex',gap:8}},
+          React.createElement('button',{className:'btn btn-p',style:{flex:1},onClick:save},editId?'Guardar':'Adicionar'),
+          editId&&React.createElement('button',{className:'btn btn-d btn-sm',onClick:del},'Eliminar')
+        )
+      ),
+      React.createElement('nav',{className:'nav'},React.createElement('button',{onClick:()=>{setForm(null);setEditId(null);}},React.createElement(Icon,{d:'M15 19l-7-7 7-7',size:18}),'Voltar'))
+    );
   }
 
-  const TABS = [
-    {k:'ops', label:'Oportunidades', icon:'M3 7h18M3 12h18M3 17h12'},
-    {k:'checklist', label:'Checklist', icon:'M9 12l2 2 4-4M5 12a7 7 0 1014 0A7 7 0 005 12'},
-    {k:'tarefas', label:'Tarefas', icon:'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 12h6M9 16h4'},
-    {k:'guias', label:'Guias', icon:'M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.966 8.966 0 00-6 2.292m0-14.25v14.25'}
-  ];
-
-  const content = {
-    ops: React.createElement(OpsTab, {ops, openAdd, openEdit}),
-    checklist: React.createElement(ChecklistTab, {cl, saveCl}),
-    tarefas: React.createElement(TarefasTab, {tasks, cycleTask, saveTasks}),
-    guias: React.createElement(GuiasTab, {guiaTab, setGuiaTab})
-  };
-
-  return React.createElement('div', {id:'app-root'},
-    React.createElement('div', {className:'content'}, content[tab]),
-    tab === 'ops' && React.createElement('button', {className:'fab', onClick:openAdd, 'aria-label':'Adicionar oportunidade'}, '+'),
-    React.createElement('nav', {className:'nav', 'aria-label':'Navegação'},
-      TABS.map(({k, label, icon}) =>
-        React.createElement('button', {key:k, className:tab===k?'active':'', onClick:()=>setTab(k), 'aria-current':tab===k?'page':undefined},
-          React.createElement(Icon, {d:icon}), label
-        )
-      )
-    )
+  return React.createElement('div',null,
+    React.createElement('div',{className:'sync-bar'},
+      React.createElement('span',null,React.createElement('span',{className:`sync-dot ${dotClass}`}),syncLabel[sync]),
+      React.createElement('button',{onClick:()=>{localStorage.removeItem('gh_tok');setToken('');setReady(false);},style:{border:'none',background:'none',cursor:'pointer',fontSize:12,color:'var(--text3)'}},'Desligar')
+    ),
+    React.createElement('div',{className:'content'},
+      tab==='ops'&&React.createElement(OpsTab,{ops,openAdd:()=>{setEditId(null);setForm(emptyOp());},openEdit:op=>{setEditId(op.id);setForm({...op});}}),
+      tab==='checklist'&&React.createElement(ChecklistTab,{cl,updCl}),
+      tab==='tarefas'&&React.createElement(TarefasTab,{tasks,updTasks}),
+      tab==='guias'&&React.createElement(GuiasTab,{gt,setGt}),
+      tab==='ops'&&React.createElement('button',{className:'fab',onClick:()=>{setEditId(null);setForm(emptyOp());}},'+')
+    ),
+    React.createElement('nav',{className:'nav'},TABS.map(({k,l,d})=>React.createElement('button',{key:k,className:tab===k?'active':'',onClick:()=>setTab(k)},React.createElement(Icon,{d}),l)))
   );
 }
 
-function FormView({form, setForm, onSave, onDelete, isEdit, onCancel}) {
-  const upd = (k, v) => setForm(f => ({...f, [k]: v}));
-  const margem = (parseFloat(form.revenda) || 0) - (parseFloat(form.precoMax) || 0);
-  const hasMargem = form.revenda && form.precoMax;
-  const margemClass = margem >= 30 ? 'alert-green' : margem > 0 ? 'alert-amber' : 'alert-red';
-  const margemLabel = margem >= 30 ? '✓ Boa margem' : margem > 0 ? 'Margem baixa — confirmar' : 'Atenção: margem negativa';
-
-  const F = (label, key, type='text', placeholder='') =>
-    React.createElement('div', {className:'field'},
-      React.createElement('label', null, label),
-      React.createElement('input', {type, value:form[key], onChange:e=>upd(key,e.target.value), placeholder})
-    );
-
-  const S = (label, key, opts) =>
-    React.createElement('div', {className:'field'},
-      React.createElement('label', null, label),
-      React.createElement('select', {value:form[key], onChange:e=>upd(key,e.target.value)},
-        opts.map(o => React.createElement('option', {key:o}, o)))
-    );
-
-  return React.createElement('div', {id:'app-root'},
-    React.createElement('div', {className:'content'},
-      React.createElement('div', {className:'form-header'},
-        React.createElement('button', {className:'back-btn', onClick:onCancel, 'aria-label':'Voltar'}, '←'),
-        React.createElement('h1', {className:'form-title'}, isEdit ? 'Editar oportunidade' : 'Nova oportunidade')
-      ),
-      hasMargem && React.createElement('div', {className:`alert ${margemClass}`},
-        `Margem esperada: ${margem >= 0 ? '+' : ''}${margem.toFixed(0)}€ — ${margemLabel}`
-      ),
-      F('Título do anúncio', 'titulo', 'text', 'ex: Candeeiro de pé vintage metal preto'),
-      React.createElement('div', {className:'row2'}, S('Fonte', 'fonte', OPT.fonte), S('Pipeline', 'pipeline', OPT.pipeline)),
-      F('Link / referência', 'link', 'url', 'https://...'),
-      React.createElement('div', {className:'row2'}, S('Tipo', 'tipo', OPT.tipo), S('Estilo', 'estilo', OPT.estilo)),
-      React.createElement('div', {className:'section-label'}, 'Preços'),
-      React.createElement('div', {className:'row2'}, F('Preço pedido (€)', 'precoPedido', 'number', '0'), F('Preço negociado esperado (€)', 'precoNeg', 'number', '0')),
-      React.createElement('div', {className:'row2'}, F('Preço máx. aceitável (€)', 'precoMax', 'number', 'máx 50€'), F('Revenda alvo (€)', 'revenda', 'number', 'objetivo ≥90€')),
-      React.createElement('div', {className:'section-label'}, 'Estado'),
-      React.createElement('div', {className:'row2'}, S('Estado físico', 'fisico', OPT.fisico), S('Estado elétrico', 'eletrico', OPT.eletrico)),
-      React.createElement('div', {className:'row2'}, S('Transporte', 'transporte', OPT.transporte), S('Score (1–5)', 'score', ['1','2','3','4','5'])),
-      React.createElement('div', {className:'field'},
-        React.createElement('label', null, 'Notas'),
-        React.createElement('textarea', {value:form.notas, onChange:e=>upd('notas',e.target.value), placeholder:'Observações, negociação, contacto...'})),
-      React.createElement('div', {style:{display:'flex', gap:8, marginTop:4}},
-        React.createElement('button', {className:'btn btn-primary', style:{flex:1}, onClick:onSave}, isEdit ? 'Guardar' : 'Adicionar'),
-        isEdit && React.createElement('button', {className:'btn btn-danger btn-sm', onClick:()=>onDelete&&onDelete()}, 'Eliminar')
-      )
+function OpsTab({ops,openAdd,openEdit}){
+  const vend=ops.filter(o=>o.pipeline==='vendidas');
+  const tm=vend.reduce((s,o)=>s+((parseFloat(o.revenda)||0)-(parseFloat(o.precoMax)||0)),0);
+  const ec=ops.filter(o=>!['vendidas','perdidas'].includes(o.pipeline));
+  return React.createElement('div',null,
+    React.createElement('div',{className:'pt'},'Oportunidades'),
+    React.createElement('div',{className:'r2',style:{marginBottom:10}},
+      React.createElement('div',{className:'metric'},React.createElement('div',{className:'v'},ops.length),React.createElement('div',{className:'l'},'registadas')),
+      React.createElement('div',{className:'metric'},React.createElement('div',{className:'v'},ec.length),React.createElement('div',{className:'l'},'em curso'))
     ),
-    React.createElement('nav', {className:'nav', 'aria-label':'Navegação'},
-      React.createElement('button', {onClick:onCancel, style:{flex:1, border:'none', background:'none', cursor:'pointer', color:'var(--text2)', fontSize:14, fontFamily:'inherit'}}, '← Voltar')
-    )
-  );
-}
-
-function OpsTab({ops, openAdd, openEdit}) {
-  const vendidas = ops.filter(o => o.pipeline === 'vendidas');
-  const totalMargem = vendidas.reduce((s,o) => s + ((parseFloat(o.revenda)||0) - (parseFloat(o.precoMax)||0)), 0);
-  const emCurso = ops.filter(o => !['vendidas','perdidas'].includes(o.pipeline));
-
-  return React.createElement('div', null,
-    React.createElement('h1', {className:'page-title'}, 'Oportunidades'),
-    React.createElement('div', {className:'row2', style:{marginBottom:10}},
-      React.createElement('div', {className:'metric'},
-        React.createElement('div', {className:'val'}, ops.length),
-        React.createElement('div', {className:'lbl'}, 'registadas')),
-      React.createElement('div', {className:'metric'},
-        React.createElement('div', {className:'val'}, emCurso.length),
-        React.createElement('div', {className:'lbl'}, 'em curso'))
-    ),
-    vendidas.length > 0 && React.createElement('div', {className:'metric', style:{marginBottom:10}},
-      React.createElement('div', {className:'val', style:{color:'var(--green)'}}, `+${totalMargem.toFixed(0)}€`),
-      React.createElement('div', {className:'lbl'}, `margem total (${vendidas.length} vendida${vendidas.length>1?'s':''})`)),
-    ops.length === 0
-      ? React.createElement('div', {className:'empty'},
-          React.createElement('div', {className:'empty-icon'}, '○'),
-          React.createElement('div', null, 'Ainda sem oportunidades registadas.'),
-          React.createElement('button', {className:'btn btn-primary', style:{marginTop:16}, onClick:openAdd}, '+ Adicionar primeira'))
-      : ops.map(op => {
-          const margem = (parseFloat(op.revenda)||0) - (parseFloat(op.precoMax)||0);
-          const hasMargem = op.revenda && op.precoMax;
-          const ps = PIPELINE_STYLE[op.pipeline] || PIPELINE_STYLE.vistas;
-          return React.createElement('div', {key:op.id, className:'op-card', onClick:()=>openEdit(op), role:'button', 'aria-label':`Editar ${op.titulo}`},
-            React.createElement('div', {style:{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:4}},
-              React.createElement('span', {className:'op-id'}, op.id),
-              React.createElement('span', {className:'badge', style:{background:ps.bg, color:ps.color}}, op.pipeline)
-            ),
-            React.createElement('div', {className:'op-title'}, op.titulo || '(sem título)'),
-            React.createElement('div', {className:'op-nums'},
-              op.precoMax && React.createElement('span', null, `Máx: ${fmt(op.precoMax)}`),
-              op.revenda && React.createElement('span', null, `Revenda: ${fmt(op.revenda)}`),
-              hasMargem && React.createElement('span', {className: margem >= 30 ? 'margem-pos' : 'margem-neg'}, `Margem: ${fmt(margem)}`)
-            )
-          );
-        })
-  );
-}
-
-function ChecklistTab({cl, saveCl}) {
-  const counts = {Sim:0, 'Não':0, Dúvida:0};
-  CHECKLIST.forEach((_,i) => { if(cl[i]) counts[cl[i]] = (counts[cl[i]]||0)+1; });
-  const naos = counts['Não'] || 0;
-  const duvidas = counts['Dúvida'] || 0;
-  const total = Object.values(counts).reduce((s,v)=>s+v, 0);
-
-  let decision = null;
-  if (naos >= 2) decision = {type:'red', msg:'2 ou mais "Não" — rejeitar esta peça'};
-  else if (total >= 8 && naos === 0 && duvidas <= 1) decision = {type:'green', msg:'Oportunidade parece boa — podes avançar'};
-  else if (duvidas >= 3) decision = {type:'amber', msg:'Muitas dúvidas — investigar melhor antes de comprar'};
-
-  const setCriteria = (i, val) => { saveCl({...cl, [i]: val}); };
-
-  return React.createElement('div', null,
-    React.createElement('div', {style:{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16}},
-      React.createElement('h1', {className:'page-title', style:{margin:0}}, 'Checklist'),
-      React.createElement('button', {className:'btn btn-sm', onClick:()=>saveCl({})}, 'Limpar')
-    ),
-    React.createElement('div', {className:'row2', style:{marginBottom:12}},
-      React.createElement('div', {className:'metric'},
-        React.createElement('div', {className:'val', style:{color:'var(--green)'}}, counts['Sim']||0),
-        React.createElement('div', {className:'lbl'}, 'Sim')),
-      React.createElement('div', {className:'metric'},
-        React.createElement('div', {className:'val', style:{color:'var(--red)'}}, counts['Não']||0),
-        React.createElement('div', {className:'lbl'}, 'Não'))
-    ),
-    decision && React.createElement('div', {className:`alert alert-${decision.type}`, role:'status'}, decision.msg),
-    React.createElement('div', {className:'card'},
-      CHECKLIST.map((item, i) => {
-        const val = cl[i];
-        const seq = [undefined, 'Sim', 'Não', 'Dúvida'];
-        return React.createElement('div', {key:i, className:'checklist-row'},
-          React.createElement('span', {className:'cl-text'}, item),
-          React.createElement('button', {
-            className:`cl-btn ${val==='Sim'?'cl-sim':val==='Não'?'cl-nao':val==='Dúvida'?'cl-duv':''}`,
-            onClick:()=>{ const idx=seq.indexOf(val); setCriteria(i, seq[(idx+1)%seq.length]); }
-          }, val || '—')
+    vend.length>0&&React.createElement('div',{className:'metric',style:{marginBottom:10}},React.createElement('div',{className:'v',style:{color:'var(--green)'}},`+${tm.toFixed(0)}€`),React.createElement('div',{className:'l'},`margem total (${vend.length} vendida${vend.length>1?'s':''})`)),
+    ops.length===0
+      ?React.createElement('div',{style:{textAlign:'center',padding:'44px 20px',color:'var(--text2)'}},React.createElement('div',{style:{fontSize:34,marginBottom:12}},'○'),React.createElement('div',null,'Ainda sem oportunidades.'),React.createElement('button',{className:'btn btn-p',style:{marginTop:16},onClick:openAdd},'+ Adicionar primeira'))
+      :ops.map(op=>{
+        const m=(parseFloat(op.revenda)||0)-(parseFloat(op.precoMax)||0);
+        const hm=op.revenda&&op.precoMax;const ps=PS[op.pipeline]||PS.vistas;
+        return React.createElement('div',{key:op.id,className:'op-card',onClick:()=>openEdit(op)},
+          React.createElement('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:3}},React.createElement('span',{style:{fontSize:11,fontFamily:'monospace',color:'var(--text3)'}},op.id),React.createElement('span',{className:'badge',style:{background:ps.bg,color:ps.c}},op.pipeline)),
+          React.createElement('div',{style:{fontSize:15,fontWeight:600,margin:'3px 0 7px'}},op.titulo||'(sem título)'),
+          React.createElement('div',{style:{display:'flex',gap:14,fontSize:13,color:'var(--text2)',flexWrap:'wrap'}},
+            op.precoMax&&React.createElement('span',null,`Máx: ${fmt(op.precoMax)}`),
+            op.revenda&&React.createElement('span',null,`Revenda: ${fmt(op.revenda)}`),
+            hm&&React.createElement('span',{style:{color:m>=30?'var(--green)':'var(--red)',fontWeight:600}},`Margem: ${fmt(m)}`)
+          )
         );
       })
+  );
+}
+
+function ChecklistTab({cl,updCl}){
+  const counts={'Sim':0,'Não':0,'Dúvida':0};
+  CHECKLIST.forEach((_,i)=>{if(cl[i])counts[cl[i]]=(counts[cl[i]]||0)+1;});
+  const naos=counts['Não']||0,duvs=counts['Dúvida']||0,tot=Object.values(counts).reduce((s,v)=>s+v,0);
+  let dec=null;
+  if(naos>=2)dec={t:'al-r',m:'2 ou mais "Não" — rejeitar esta peça'};
+  else if(tot>=8&&naos===0&&duvs<=1)dec={t:'al-g',m:'Oportunidade parece boa — podes avançar'};
+  else if(duvs>=3)dec={t:'al-a',m:'Muitas dúvidas — investigar melhor'};
+  const seq=[undefined,'Sim','Não','Dúvida'];
+  return React.createElement('div',null,
+    React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}},
+      React.createElement('div',{className:'pt',style:{margin:0}},'Checklist'),
+      React.createElement('button',{className:'btn btn-sm',onClick:()=>updCl({})},'Limpar')
     ),
-    React.createElement('div', {className:'card', style:{marginTop:10}},
-      React.createElement('div', {style:{fontWeight:600, marginBottom:10}}, 'Regra de decisão'),
-      React.createElement('div', {style:{color:'var(--red)', marginBottom:5, fontSize:13}}, '≥ 2 "Não" → Rejeitar sem hesitar'),
-      React.createElement('div', {style:{color:'var(--amber-text)', marginBottom:5, fontSize:13}}, 'Muitos "Dúvida" → Investigar melhor, não comprar'),
-      React.createElement('div', {style:{color:'var(--green)', fontSize:13}}, 'Só avançar quando a oportunidade for claramente boa')
+    React.createElement('div',{className:'r2',style:{marginBottom:12}},
+      React.createElement('div',{className:'metric'},React.createElement('div',{className:'v',style:{color:'var(--green)'}},counts['Sim']),React.createElement('div',{className:'l'},'Sim')),
+      React.createElement('div',{className:'metric'},React.createElement('div',{className:'v',style:{color:'var(--red)'}},counts['Não']),React.createElement('div',{className:'l'},'Não'))
+    ),
+    dec&&React.createElement('div',{className:`al ${dec.t}`},dec.m),
+    React.createElement('div',{className:'card'},CHECKLIST.map((item,i)=>{
+      const val=cl[i];
+      return React.createElement('div',{key:i,className:'cl-row',style:{borderBottom:i===CHECKLIST.length-1?'none':undefined}},
+        React.createElement('span',{style:{flex:1,fontSize:13,lineHeight:1.4}},item),
+        React.createElement('button',{className:`cl-btn${val==='Sim'?' cl-sim':val==='Não'?' cl-nao':val==='Dúvida'?' cl-duv':''}`,onClick:()=>updCl({...cl,[i]:seq[(seq.indexOf(val)+1)%seq.length]})},val||'—')
+      );
+    })),
+    React.createElement('div',{className:'card',style:{marginTop:10,fontSize:13}},
+      React.createElement('div',{style:{fontWeight:600,marginBottom:8}},'Regra de decisão'),
+      React.createElement('div',{style:{color:'var(--red)',marginBottom:4}},'≥ 2 "Não" → Rejeitar sem hesitar'),
+      React.createElement('div',{style:{color:'var(--amber-t)',marginBottom:4}},'Muitos "Dúvida" → Investigar melhor'),
+      React.createElement('div',{style:{color:'var(--green)'}},'Só avançar quando a oportunidade for claramente boa')
     )
   );
 }
 
-function TarefasTab({tasks, cycleTask, saveTasks}) {
-  const sems = ['Semana 1','Semana 2','Semana 3','Semana 4'];
-  const resetTasks = () => { if(confirm('Repor todas as tarefas para "por fazer"?')) saveTasks(TASKS0); };
-
-  return React.createElement('div', null,
-    React.createElement('div', {style:{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16}},
-      React.createElement('h1', {className:'page-title', style:{margin:0}}, 'Tarefas'),
-      React.createElement('button', {className:'btn btn-sm', onClick:resetTasks}, 'Repor')
+function TarefasTab({tasks,updTasks}){
+  const sems=['Semana 1','Semana 2','Semana 3','Semana 4'];
+  const seq={pf:'ec',ec:'ft',ft:'pf'};
+  const labels={pf:'por fazer',ec:'em curso',ft:'feito'};
+  const cycle=id=>updTasks(tasks.map(t=>t.id===id?{...t,st:seq[t.st]||'pf'}:t));
+  return React.createElement('div',null,
+    React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}},
+      React.createElement('div',{className:'pt',style:{margin:0}},'Tarefas'),
+      React.createElement('button',{className:'btn btn-sm',onClick:()=>{if(confirm('Repor todas?'))updTasks(TASKS0);}},'Repor')
     ),
-    sems.map(sem => {
-      const tks = tasks.filter(t => t.sem === sem);
-      const feitas = tks.filter(t => t.st === 'ft').length;
-      const pct = tks.length ? Math.round(feitas / tks.length * 100) : 0;
-      return React.createElement('div', {key:sem},
-        React.createElement('div', {className:'week-header'},
-          React.createElement('span', null, sem),
-          React.createElement('span', null, `${feitas}/${tks.length}`)
-        ),
-        React.createElement('div', {className:'progress-bar'},
-          React.createElement('div', {className:'progress-fill', style:{width:`${pct}%`}})),
-        React.createElement('div', {className:'card'},
-          tks.map(t => React.createElement('div', {key:t.id, className:'task-row'},
-            React.createElement('span', {className:'task-area'}, t.area),
-            React.createElement('span', {className:'task-text', style:{textDecoration:t.st==='ft'?'line-through':'none', opacity:t.st==='ft'?0.55:1}}, t.text),
-            React.createElement('button', {className:`status-pill st-${t.st}`, onClick:()=>cycleTask(t.id)},
-              {pf:'por fazer', ec:'em curso', ft:'feito'}[t.st])
-          ))
-        )
+    sems.map(sem=>{
+      const tks=tasks.filter(t=>t.sem===sem);
+      const ft=tks.filter(t=>t.st==='ft').length;
+      return React.createElement('div',{key:sem},
+        React.createElement('div',{className:'wh'},React.createElement('span',null,sem),React.createElement('span',null,`${ft}/${tks.length}`)),
+        React.createElement('div',{className:'pb'},React.createElement('div',{className:'pf2',style:{width:`${tks.length?Math.round(ft/tks.length*100):0}%`}})),
+        React.createElement('div',{className:'card'},tks.map((t,i)=>React.createElement('div',{key:t.id,className:'tk-row',style:{borderBottom:i===tks.length-1?'none':undefined}},
+          React.createElement('span',{className:'tk-area'},t.area),
+          React.createElement('span',{style:{flex:1,fontSize:13,lineHeight:1.4,textDecoration:t.st==='ft'?'line-through':'none',opacity:t.st==='ft'?.55:1}},t.text),
+          React.createElement('button',{className:`sp st-${t.st}`,onClick:()=>cycle(t.id)},labels[t.st])
+        )))
       );
     })
   );
 }
 
-function GuiasTab({guiaTab, setGuiaTab}) {
-  const TABS = [{k:'fluxo',l:'Fluxo'},{k:'regras',l:'Regras'},{k:'canais',l:'Canais'},{k:'modelos',l:'Modelos'}];
-  return React.createElement('div', null,
-    React.createElement('h1', {className:'page-title'}, 'Guias'),
-    React.createElement('div', {className:'guia-tabs'},
-      TABS.map(({k,l}) => React.createElement('button', {key:k, className:`guia-tab${guiaTab===k?' active':''}`, onClick:()=>setGuiaTab(k)}, l))
+function GuiasTab({gt,setGt}){
+  const tabs=[{k:'fluxo',l:'Fluxo'},{k:'regras',l:'Regras'},{k:'canais',l:'Canais'},{k:'modelos',l:'Modelos'}];
+  const steps=[{n:1,t:'Ver oportunidades',d:'Procurar em OLX e Facebook Marketplace. Guardar só os minimamente promissores.',e:'Apaixonar-me por uma peça cedo demais'},{n:2,t:'Filtrar rápido',d:'Aplicar a checklist curta a cada oportunidade guardada.',e:'Perder tempo com peças medianas'},{n:3,t:'Avaliar a fundo',d:'Confirmar preço, estado, margem, transporte e potencial de revenda.',e:'Comprar por entusiasmo'},{n:4,t:'Comprar',d:'Negociar e fechar dentro do teto de 50€.',e:'Ultrapassar o preço máximo aceitável'},{n:5,t:'Anunciar',d:'Limpar, fotografar, escrever descrição e publicar no próprio dia se possível.',e:'Adiar a publicação'},{n:6,t:'Vender e aprender',d:'Registar resultado, margem real, tempo gasto e lições.',e:'Não aprender com o processo'}];
+  const canais=[{name:'OLX',desc:'Canal principal',url:'https://www.olx.pt/',pri:'principal'},{name:'Facebook Marketplace',desc:'Canal principal',url:'https://www.facebook.com/marketplace/',pri:'principal'},{name:'Catawiki',desc:'Peças especiais',url:'https://www.catawiki.com/en/help/specific-guidelines-interiors-decorations/lighting-submission-guidelines',pri:'curado'},{name:'Vinted Casa',desc:'Experimental',url:'https://www.vinted.pt/catalog/1918-home',pri:'experimental'}];
+  const cS={principal:{bg:'var(--green-bg)',c:'var(--green)'},curado:{bg:'var(--amber-bg)',c:'var(--amber-t)'},experimental:{bg:'var(--gray-bg)',c:'var(--gray-t)'}};
+  const modelos=[{n:1,nome:'Arbitragem simples',desc:'Comprar subavaliado → melhorar apresentação → revender com margem.',vant:'Baixo esforço, velocidade alta.',risco:'Depende de encontrar boas oportunidades.',rec:true},{n:2,nome:'Arbitragem com melhoria',desc:'Comprar → limpar/melhorar → revender com melhor valor percebido.',vant:'Margem potencialmente maior.',risco:'Mais tempo e investimento.',rec:false},{n:3,nome:'Canal duplo',desc:'Comprar em canal massificado → vender em canal mais curado.',vant:'Maximiza preço em peças especiais.',risco:'Processo mais longo.',rec:false}];
+  return React.createElement('div',null,
+    React.createElement('div',{className:'pt'},'Guias'),
+    React.createElement('div',{className:'gt-tabs'},tabs.map(({k,l})=>React.createElement('button',{key:k,className:`gt${gt===k?' active':''}`,onClick:()=>setGt(k)},l))),
+    gt==='fluxo'&&steps.map(({n,t,d,e})=>React.createElement('div',{key:n,style:{display:'flex',gap:12,marginBottom:14}},React.createElement('div',{className:'sn'},n),React.createElement('div',null,React.createElement('div',{style:{fontSize:14,fontWeight:600}},t),React.createElement('div',{style:{fontSize:12,color:'var(--text2)',marginTop:2,lineHeight:1.4}},d),React.createElement('div',{style:{fontSize:12,color:'var(--red)',marginTop:2}},`Erro típico: ${e}`)))),
+    gt==='regras'&&React.createElement('div',null,
+      React.createElement('div',{className:'al al-r'},'⚑ Não comprar sem passar no filtro'),
+      React.createElement('div',{className:'al al-a'},'⚑ Nunca ultrapassar 50€ por peça'),
+      React.createElement('div',{className:'al al-g'},'⚑ Máximo de 2 peças em simultâneo'),
+      React.createElement('div',{className:'card'},React.createElement('div',{style:{fontWeight:600,marginBottom:8}},'Critério para continuar'),React.createElement('div',{style:{fontSize:13,color:'var(--text2)',lineHeight:1.5}},'Vender pelo menos 1 peça com margem decente e sem caos operacional.'),React.createElement('div',{className:'divider'}),React.createElement('div',{style:{fontWeight:600,marginBottom:8}},'Critério para parar sem culpa'),React.createElement('div',{style:{fontSize:13,color:'var(--text2)',lineHeight:1.5}},'Não encontrar oportunidades claras — ou o processo começar a consumir mais energia do que ajuda.'))
     ),
-    guiaTab === 'fluxo' && React.createElement('div', null,
-      [
-        {n:1,t:'Ver oportunidades',d:'Procurar em OLX e Facebook Marketplace. Guardar só os minimamente promissores.',e:'Apaixonar-me por uma peça cedo demais'},
-        {n:2,t:'Filtrar rápido',d:'Aplicar a checklist curta a cada oportunidade guardada.',e:'Perder tempo com peças medianas'},
-        {n:3,t:'Avaliar a fundo',d:'Confirmar preço, estado, margem, transporte e potencial de revenda.',e:'Comprar por entusiasmo'},
-        {n:4,t:'Comprar',d:'Negociar e fechar dentro do teto de 50€.',e:'Ultrapassar o preço máximo aceitável'},
-        {n:5,t:'Anunciar',d:'Limpar, fotografar, escrever descrição e publicar no próprio dia se possível.',e:'Adiar a publicação'},
-        {n:6,t:'Vender e aprender',d:'Registar resultado, margem real, tempo gasto e lições.',e:'Não aprender com o processo'}
-      ].map(({n,t,d,e}) => React.createElement('div', {key:n, className:'step-row'},
-        React.createElement('div', {className:'step-num'}, n),
-        React.createElement('div', null,
-          React.createElement('div', {className:'step-title'}, t),
-          React.createElement('div', {className:'step-desc'}, d),
-          React.createElement('div', {className:'step-err'}, `Erro típico: ${e}`)
-        )
-      ))
-    ),
-    guiaTab === 'regras' && React.createElement('div', null,
-      React.createElement('div', {className:'alert alert-red'}, '⚑ Não comprar sem passar no filtro'),
-      React.createElement('div', {className:'alert alert-amber'}, '⚑ Nunca ultrapassar 50€ por peça'),
-      React.createElement('div', {className:'alert alert-green'}, '⚑ Máximo de 2 peças em simultâneo'),
-      React.createElement('div', {className:'card'},
-        React.createElement('div', {style:{fontWeight:600, marginBottom:8}}, 'Critério para continuar'),
-        React.createElement('div', {style:{fontSize:13, color:'var(--text2)', lineHeight:1.5}}, 'Vender pelo menos 1 peça com margem decente e sem caos operacional.'),
-        React.createElement('div', {className:'divider'}),
-        React.createElement('div', {style:{fontWeight:600, marginBottom:8}}, 'Critério para parar sem culpa'),
-        React.createElement('div', {style:{fontSize:13, color:'var(--text2)', lineHeight:1.5}}, 'Não encontrar oportunidades claras — ou o processo começar a consumir mais energia do que ajuda.')
-      )
-    ),
-    guiaTab === 'canais' && React.createElement('div', null,
-      React.createElement('div', {className:'card'},
-        [
-          {name:'OLX', desc:'Canal principal — compra e venda', url:'https://www.olx.pt/', pri:'principal'},
-          {name:'Facebook Marketplace', desc:'Canal principal — bom para negociação rápida', url:'https://www.facebook.com/marketplace/', pri:'principal'},
-          {name:'Catawiki', desc:'Apenas peças especiais com valor colecionável', url:'https://www.catawiki.com/en/help/specific-guidelines-interiors-decorations/lighting-submission-guidelines', pri:'curado'},
-          {name:'Vinted Casa', desc:'Experimental — não prioritário nesta fase', url:'https://www.vinted.pt/catalog/1918-home', pri:'experimental'}
-        ].map(({name, desc, url, pri}) => {
-          const styles = {principal:{bg:'var(--green-bg)',color:'var(--green)'},curado:{bg:'var(--amber-bg)',color:'var(--amber-text)'},experimental:{bg:'var(--gray-bg)',color:'var(--gray-text)'}};
-          const s = styles[pri];
-          return React.createElement('div', {key:name, className:'canal-row'},
-            React.createElement('div', null,
-              React.createElement('div', {style:{display:'flex', alignItems:'center', gap:6}},
-                React.createElement('span', {className:'canal-name'}, name),
-                React.createElement('span', {className:'badge', style:{background:s.bg, color:s.color, fontSize:10}}, pri)
-              ),
-              React.createElement('div', {className:'canal-desc'}, desc)
-            ),
-            React.createElement('a', {href:url, className:'canal-link', target:'_blank', rel:'noopener noreferrer'}, 'Abrir →')
-          );
-        })
-      )
-    ),
-    guiaTab === 'modelos' && React.createElement('div', null,
-      [
-        {n:1, nome:'Arbitragem simples', desc:'Comprar subavaliado → melhorar apresentação → revender com margem.', vant:'Baixo esforço, velocidade de teste alta.', risco:'Depende de encontrar boas oportunidades.', rec:true},
-        {n:2, nome:'Arbitragem com melhoria', desc:'Comprar → limpar/melhorar ligeiramente → revender com melhor valor percebido.', vant:'Margem potencialmente maior.', risco:'Mais tempo e investimento. Risco de subestimar esforço.', rec:false},
-        {n:3, nome:'Canal duplo', desc:'Comprar em canal massificado → vender em canal mais curado quando fizer sentido.', vant:'Maximiza preço em peças especiais.', risco:'Processo mais longo. Catawiki tem comissões.', rec:false}
-      ].map(({n, nome, desc, vant, risco, rec}) =>
-        React.createElement('div', {key:n, className:`model-card${rec?' recommended':''}`},
-          React.createElement('div', {className:'model-header'},
-            React.createElement('div', {className:'step-num', style:{width:26,height:26,fontSize:13}}, n),
-            React.createElement('span', {style:{fontWeight:600, fontSize:14}}, nome),
-            rec && React.createElement('span', {className:'badge', style:{background:'var(--amber-bg)', color:'var(--amber-text)', marginLeft:'auto'}}, 'Recomendado')
-          ),
-          React.createElement('div', {style:{fontSize:13, color:'var(--text2)', marginBottom:8, lineHeight:1.4}}, desc),
-          React.createElement('div', {style:{fontSize:12, color:'var(--green)', marginBottom:3}}, `✓ ${vant}`),
-          React.createElement('div', {style:{fontSize:12, color:'var(--red)'}}, `⚠ ${risco}`)
-        )
-      )
-    )
+    gt==='canais'&&React.createElement('div',{className:'card'},canais.map(({name,desc,url,pri})=>React.createElement('div',{key:name,className:'canal-row'},React.createElement('div',null,React.createElement('div',{style:{display:'flex',alignItems:'center',gap:6}},React.createElement('span',{style:{fontSize:14,fontWeight:600}},name),React.createElement('span',{className:'badge',style:{background:cS[pri].bg,color:cS[pri].c,fontSize:10}},pri)),React.createElement('div',{style:{fontSize:12,color:'var(--text2)',marginTop:2}},desc)),React.createElement('a',{href:url,style:{fontSize:13,color:'var(--amber)',textDecoration:'none',fontWeight:500},target:'_blank',rel:'noopener noreferrer'},'Abrir →')))),
+    gt==='modelos'&&modelos.map(({n,nome,desc,vant,risco,rec})=>React.createElement('div',{key:n,className:`mc${rec?' rec':''}`},React.createElement('div',{style:{display:'flex',alignItems:'center',gap:8,marginBottom:7}},React.createElement('div',{className:'sn',style:{width:26,height:26,fontSize:12}},n),React.createElement('span',{style:{fontWeight:600,fontSize:14}},nome),rec&&React.createElement('span',{className:'badge',style:{background:'var(--amber-bg)',color:'var(--amber-t)',marginLeft:'auto'}},'Recomendado')),React.createElement('div',{style:{fontSize:13,color:'var(--text2)',marginBottom:7,lineHeight:1.4}},desc),React.createElement('div',{style:{fontSize:12,color:'var(--green)',marginBottom:3}},`✓ ${vant}`),React.createElement('div',{style:{fontSize:12,color:'var(--red)'}},`⚠ ${risco}`)))
   );
 }
 
-ReactDOM.render(React.createElement(App), document.getElementById('root'));
+ReactDOM.render(React.createElement(App),document.getElementById('root'));
 </script>
 </body>
 </html>
